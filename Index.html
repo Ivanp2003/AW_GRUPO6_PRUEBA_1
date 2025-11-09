@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demostración de Consumo de API - HTTP Cat y NewsAPI</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- CSS externo -->
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <!-- JavaScript -->
+  <script src="./javaScript/script.js" defer></script>
+</head>
+
+<body class="min-h-screen py-12 px-4">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <header class="text-center mb-12">
+      <h1 class="text-5xl font-bold mb-4 gradient-text-primary">
+        Demostración de Consumo de API
+      </h1>
+      <p class="text-xl text-muted-foreground">
+        Explora integraciones de API públicas y privadas
+      </p>
+    </header>
+
+    <div class="space-y-8">
+      <!-- API Gatos -->
+      <div class="card p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="icon-container gradient-primary"></div>
+          <h2 class="text-3xl font-bold gradient-text-primary">
+            Consumo de API Pública - HTTP Cat
+          </h2>
+        </div>
+
+        <p class="mb-6 text-muted-foreground">
+          Ingresa un código de estado HTTP para ver la imagen de gato correspondiente
+        </p>
+
+        <div class="flex gap-3 mb-6">
+          <input
+            type="text"
+            id="httpCode"
+            class="input-field flex-1"
+            placeholder="Ingresa código HTTP (ej., 200, 404, 500)"
+          />
+          <button onclick="showCat()" class="btn gradient-primary">
+            Mostrar Gato
+          </button>
+        </div>
+
+        <div id="catContainer" class="cat-box">
+          <div class="text-center p-8">
+            <p class="text-muted-foreground">
+              La imagen del gato aparecerá aquí
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NewsAPI -->
+      <div class="card p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="icon-container gradient-secondary"></div>
+          <h2 class="text-3xl font-bold gradient-text-secondary">
+            Consumo de API Privada - NewsAPI
+          </h2>
+        </div>
+
+        <p class="mb-6 text-muted-foreground">
+          Busca los últimos artículos de noticias por palabra clave
+        </p>
+
+        <div class="flex gap-3 mb-8">
+          <input
+            type="text"
+            id="searchQuery"
+            class="input-field flex-1"
+            placeholder="Ingresa palabra clave (ej., tecnología, salud, deportes)"
+          />
+          <button onclick="searchNews()" class="btn gradient-secondary">
+            Buscar Noticias
+          </button>
+        </div>
+
+        <div id="newsResults" class="space-y-4">
+          <div class="text-center p-8 border-2 border-dashed rounded-lg">
+            <p class="text-muted-foreground">
+              Los artículos aparecerán aquí después de la búsqueda
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-center mt-12 text-sm text-muted-foreground">
+      <p>Elaborado por Odaliz Balseca, Alejandro Guanoluisa, Andrés Panchi</p>
+      <p>Construido con HTML, CSS y JavaScript</p>
+    </footer>
+  </div>
+</body>
+</html>

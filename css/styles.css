@@ -1,0 +1,142 @@
+/* VARIABLES Y COLORES BASE */
+:root {
+  --primary: 25 90% 55%;              /* naranja fuerte */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 330 80% 60%;           /* rosado/magenta */
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 40%;
+  --border: 0 0% 85%;
+}
+
+/* ESTILOS GENERALES */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: hsl(0 0% 100%);
+  color: hsl(var(--muted-foreground));
+}
+
+.text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+
+.icon-muted {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.5;
+}
+
+/* TARJETAS Y CONTENEDORES */
+.card {
+  background-color: hsl(var(--muted) / 0.3);
+  border: 2px solid hsl(var(--border));
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px hsl(0 0% 0% / 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.08);
+}
+
+/*CAMPOS DE ENTRADA */
+.input-field {
+  padding: 0.75rem 1rem;
+  border: 2px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  outline: none;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
+}
+
+/* BOTONES */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* GRADIENTES */
+.gradient-primary {
+  background: linear-gradient(to right, hsl(25 90% 55%), hsl(35 90% 60%)); /* naranja */
+}
+
+.gradient-secondary {
+  background: linear-gradient(to right, hsl(330 80% 60%), hsl(300 80% 55%)); /* rosado–morado */
+}
+
+.gradient-text-primary {
+  background: linear-gradient(to right, hsl(25 90% 55%), hsl(35 90% 60%));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-secondary {
+  background: linear-gradient(to right, hsl(330 80% 60%), hsl(300 80% 55%));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* CONTENEDOR DE ÍCONOS */
+.icon-container {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-container svg {
+  color: hsl(var(--primary-foreground));
+}
+
+/*CAJA DE GATOS (HTTP Cat) */
+.cat-box {
+  min-height: 400px;
+  border: 2px dashed hsl(var(--border));
+  border-radius: 1rem;
+  background-color: hsl(var(--muted) / 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+.cat-box:hover {
+  background-color: hsl(var(--muted) / 0.4);
+}
+
+/* FOOTER */
+footer p {
+  margin-bottom: 0.25rem;
+}
+
+footer {
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 1rem;
+  margin-top: 3rem;
+  color: hsl(var(--muted-foreground));
+}
+
+footer p {
+  font-weight:lighter;
+  color: black;
+  font-size: 15px;
+}
