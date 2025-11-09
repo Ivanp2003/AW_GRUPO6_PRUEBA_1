@@ -1,10 +1,9 @@
-// Funcionalidad para la api de gato
+// === API PÚBLICA: HTTP.CAT ===
 function showCat() {
   const input = document.getElementById("httpCode");
   const code = input.value.trim();
   const container = document.getElementById("catContainer");
 
-  // Verificamos que el usuario haya ingresado un número válido de tres cifras
   if (!/^\d{3}$/.test(code)) {
     container.innerHTML = `
       <div class="text-center p-8 text-red-500">
@@ -14,20 +13,14 @@ function showCat() {
     return;
   }
 
-  const imgUrl = `https://http.cat/${code}`; //Dirección para consumir la API pública
+  const imgUrl = `https://http.cat/${code}`;
 
-  // Mostramos un loader mientras carga la imagen
-  container.innerHTML = `
-    <div class="text-center p-8">
-      <p class="text-muted-foreground">Cargando imagen del gato... 🐾</p>
-    </div>
-  `;
+  container.innerHTML = `<p class="text-center p-8 text-gray-600">Cargando imagen del gato... 🐾</p>`;
 
-  // Creamos una imagen y verificamos si existe
   const img = new Image();
   img.src = imgUrl;
   img.alt = `Gato HTTP ${code}`;
-  img.className = "max-w-full rounded-lg shadow-md mx-auto";
+  img.className = "cat-img";
 
   img.onload = () => {
     container.innerHTML = "";
@@ -35,25 +28,50 @@ function showCat() {
   };
 
   img.onerror = () => {
-    container.innerHTML = `
-      <div class="text-center p-8 text-red-500">
-        <p>No existe imagen asociada al código HTTP ${code}</p>
-      </div>
-    `;
+    container.innerHTML = `<p class="text-center text-red-500">No existe imagen asociada al código HTTP ${code}</p>`;
   };
 }
 
-// Funcionalidad NewsAPI (placeholder)
-function searchNews() {
-  const query = document.getElementById('searchQuery').value;
-  console.log('Searching for:', query);
+// === API PRIVADA: NEWSAPI ===
+async function searchNews() {
+  const query = document.getElementById('searchQuery').value.trim();
+  const container = document.getElementById('newsContainer');
 
-  // La llamada API se implementará más adelante
+  if (query === "") {
+    container.innerHTML = `<p class="text-center text-red-500">Ingresa un tema para buscar noticias 📰</p>`;
+    return;
+  }
+
+  const apiKey = "ef7ca1346e3b4a6680d1fa7e9ada33af"; // Tu API key privada
+  const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=es&pageSize=5&apiKey=${apiKey}`;
+
+  container.innerHTML = `<p class="text-center text-gray-600">Buscando noticias...</p>`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Error en la solicitud");
+
+    const data = await response.json();
+
+    if (data.articles.length === 0) {
+      container.innerHTML = `<p class="text-center text-yellow-600">No se encontraron noticias sobre "${query}"</p>`;
+      return;
+    }
+
+    container.innerHTML = data.articles.map(article => `
+      <div class="news-card">
+        <h3>${article.title}</h3>
+        <p><strong>${article.source.name}</strong> - ${new Date(article.publishedAt).toLocaleDateString()}</p>
+        <p>${article.description || "Sin descripción disponible."}</p>
+        <a href="${article.url}" target="_blank">Leer más</a>
+      </div>
+    `).join('');
+  } catch (error) {
+    container.innerHTML = `<p class="text-center text-red-500">Error al cargar noticias 😞</p>`;
+    console.error(error);
+  }
 }
 
-// Ingrese la clave de soporte para NewsAPI
 document.getElementById('searchQuery').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    searchNews();
-  }
+  if (e.key === 'Enter') searchNews();
 });
