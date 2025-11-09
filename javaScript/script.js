@@ -32,46 +32,45 @@ function showCat() {
   };
 }
 
-// === API PRIVADA: NEWSAPI ===
+// === API PRIVADA (NewsAPI con backend local) ===
 async function searchNews() {
-  const query = document.getElementById('searchQuery').value.trim();
-  const container = document.getElementById('newsContainer');
+  const query = document.getElementById("searchQuery").value.trim();
+  const container = document.getElementById("newsResults");
 
   if (query === "") {
     container.innerHTML = `<p class="text-center text-red-500">Ingresa un tema para buscar noticias 📰</p>`;
     return;
   }
 
-  const apiKey = "ef7ca1346e3b4a6680d1fa7e9ada33af"; // Tu API key privada
-  const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=es&pageSize=5&apiKey=${apiKey}`;
-
   container.innerHTML = `<p class="text-center text-gray-600">Buscando noticias...</p>`;
 
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Error en la solicitud");
-
+    const response = await fetch(`http://localhost:3000/news?q=${encodeURIComponent(query)}`);
     const data = await response.json();
 
-    if (data.articles.length === 0) {
+    if (!data.articles || data.articles.length === 0) {
       container.innerHTML = `<p class="text-center text-yellow-600">No se encontraron noticias sobre "${query}"</p>`;
       return;
     }
 
-    container.innerHTML = data.articles.map(article => `
+    container.innerHTML = data.articles
+      .map(
+        (article) => `
       <div class="news-card">
         <h3>${article.title}</h3>
         <p><strong>${article.source.name}</strong> - ${new Date(article.publishedAt).toLocaleDateString()}</p>
         <p>${article.description || "Sin descripción disponible."}</p>
         <a href="${article.url}" target="_blank">Leer más</a>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
   } catch (error) {
     container.innerHTML = `<p class="text-center text-red-500">Error al cargar noticias 😞</p>`;
     console.error(error);
   }
 }
 
-document.getElementById('searchQuery').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') searchNews();
+document.getElementById("searchQuery").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") searchNews();
 });
