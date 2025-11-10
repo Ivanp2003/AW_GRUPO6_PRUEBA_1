@@ -1,0 +1,34 @@
+# Variables de entorno - NUNCA subir a GitHub
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.backup
+
+# Node modules
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Build
+dist/
+build/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporal
+*.tmp
+.cache/
