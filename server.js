@@ -8,11 +8,10 @@ import dotenv from "dotenv";
 // Cargar variables de entorno
 dotenv.config();
 
-// Inicialización de Express
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Obtener ruta actual correctamente (para ES Modules)
+// Obtener __dirname en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -20,28 +19,17 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 app.use(express.json());
 
-// Servir archivos estáticos
-// Intenta primero desde la raíz, si no existe, desde el mismo directorio
-app.use(express.static(path.join(__dirname)));
-app.use(express.static(path.join(__dirname, "../")));
+//  Servir archivos estáticos desde public/
 app.use(express.static(path.join(__dirname, "public")));
 
-// ⚠️ IMPORTANTE: En producción no forzamos la salida si falta la API key
-// porque Vercel/Render la inyectan después del build
-if (!process.env.NEWS_API_KEY && process.env.NODE_ENV !== 'production') {
-  console.warn("\n  ADVERTENCIA: NEWS_API_KEY no está configurada");
-  console.warn("   Para desarrollo local:");
-  console.warn("   1. Copia `.env.example` a `.env`");
-  console.warn("   2. Agrega: NEWS_API_KEY=tu_clave_aquí");
-  console.warn("   3. Reinicia el servidor\n");
-}
-
+// Log de inicio
 if (process.env.NEWS_API_KEY) {
-  console.log(" Variables de entorno cargadas correctamente");
-  console.log(` NewsAPI Key configurada: ${process.env.NEWS_API_KEY.slice(0, 8)}...\n`);
+  console.log(` NewsAPI Key configurada: ${process.env.NEWS_API_KEY.slice(0, 8)}...`);
+} else {
+  console.warn("  NEWS_API_KEY no configurada");
 }
 
-//  Health Check (PRIMERO - antes que otros endpoints)
+// 🩺 Health Check
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
@@ -52,7 +40,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-//  Endpoint para buscar noticias
+//  API de Noticias
 app.get("/news", async (req, res) => {
   const query = req.query.q;
 
@@ -65,13 +53,11 @@ app.get("/news", async (req, res) => {
 
   const apiKey = process.env.NEWS_API_KEY;
 
-  // Validar API Key
   if (!apiKey) {
     console.error(" NEWS_API_KEY no configurada");
     return res.status(500).json({ 
       error: "Configuración incompleta",
-      mensaje: "NEWS_API_KEY no está configurada en el servidor",
-      hint: "Configura la variable de entorno NEWS_API_KEY"
+      mensaje: "NEWS_API_KEY no está configurada"
     });
   }
 
@@ -90,18 +76,17 @@ app.get("/news", async (req, res) => {
 
     const data = await response.json();
 
-    // Validar errores específicos de NewsAPI
     if (!response.ok) {
       console.error(" Error desde NewsAPI:", data);
 
       let mensajeError = "Error al obtener noticias";
 
       if (response.status === 401) {
-        mensajeError = "API Key inválida o expirada. Verifica tu configuración";
+        mensajeError = "API Key inválida o expirada";
       } else if (response.status === 429) {
         mensajeError = "Límite de solicitudes excedido. Intenta más tarde.";
       } else if (response.status === 426) {
-        mensajeError = "Plan gratuito de NewsAPI limitado. Actualiza tu cuenta.";
+        mensajeError = "Plan gratuito limitado. Actualiza tu cuenta.";
       } else if (data.message) {
         mensajeError = data.message;
       }
@@ -122,21 +107,20 @@ app.get("/news", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(" Error interno en el servidor:", error);
+    console.error(" Error interno:", error);
     res.status(500).json({
-      error: "Error interno del servidor al obtener noticias",
+      error: "Error interno del servidor",
       mensaje: error.message
     });
   }
 });
 
-//  Endpoint para HTTP Cat (API pública)
+//  HTTP Cat API
 app.get("/httpcat/:code", async (req, res) => {
   try {
     const { code } = req.params;
     const statusCode = parseInt(code);
     
-    // Validar código HTTP
     if (isNaN(statusCode) || statusCode < 100 || statusCode > 599) {
       return res.status(400).json({
         error: "Código HTTP inválido",
@@ -146,12 +130,11 @@ app.get("/httpcat/:code", async (req, res) => {
 
     const imageUrl = `https://http.cat/${code}`;
     
-    // Verificar si existe la imagen
     const response = await fetch(imageUrl);
     
     if (!response.ok) {
       return res.status(404).json({
-        error: "Imagen no encontrada para este código HTTP"
+        error: "Imagen no encontrada para este código"
       });
     }
 
@@ -163,19 +146,20 @@ app.get("/httpcat/:code", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ Error en httpcat:", error);
+    console.error(" Error en httpcat:", error);
     res.status(500).json({
-      error: "Error al obtener imagen HTTP Cat",
+      error: "Error al obtener imagen",
       mensaje: error.message
     });
   }
 });
 
-//  API Info
+//  Documentación API
 app.get("/api", (req, res) => {
   res.json({
-    nombre: "API Grupo 6",
+    nombre: "API Grupo 6 - NewsAPI & HTTP Cat",
     version: "1.0.0",
+    descripcion: "Backend para consumo de APIs públicas y privadas",
     endpoints: {
       health: {
         metodo: "GET",
@@ -184,8 +168,11 @@ app.get("/api", (req, res) => {
       },
       news: {
         metodo: "GET",
-        ruta: "/news?q=termino",
-        descripcion: "Buscar noticias por término",
+        ruta: "/news",
+        descripcion: "Buscar noticias",
+        parametros: {
+          q: "término de búsqueda (requerido)"
+        },
         ejemplo: "/news?q=tecnologia"
       },
       httpcat: {
@@ -193,45 +180,30 @@ app.get("/api", (req, res) => {
         ruta: "/httpcat/:code",
         descripcion: "Obtener imagen HTTP Cat",
         ejemplo: "/httpcat/404"
+      },
+      docs: {
+        metodo: "GET",
+        ruta: "/api",
+        descripcion: "Esta documentación"
       }
     },
-    status: "online",
+    ejemplos: [
+      "GET /health",
+      "GET /news?q=deportes",
+      "GET /httpcat/200",
+      "GET /api"
+    ],
+    frontend: "Disponible en /",
     timestamp: new Date().toISOString()
   });
 });
 
-//  Servir página principal
+//  Servir index.html en la ruta raíz
 app.get("/", (req, res) => {
-  // Intentar servir index.html desde diferentes ubicaciones
-  const posiblesPaths = [
-    path.join(__dirname, "index.html"),
-    path.join(__dirname, "../index.html"),
-    path.join(__dirname, "public", "index.html")
-  ];
-
-  for (const filePath of posiblesPaths) {
-    try {
-      res.sendFile(filePath);
-      return;
-    } catch (error) {
-      continue;
-    }
-  }
-
-  // Si no encuentra el archivo, devolver JSON
-  res.json({
-    mensaje: " API Backend funcionando",
-    endpoints: [
-      "GET /health - Estado del servidor",
-      "GET /api - Información de la API",
-      "GET /news?q=termino - Buscar noticias",
-      "GET /httpcat/:code - HTTP Cat"
-    ],
-    docs: "/api"
-  });
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-//  Manejo de rutas no encontradas (404)
+//  Manejo de rutas no encontradas
 app.use((req, res) => {
   res.status(404).json({
     error: "Endpoint no encontrado",
@@ -241,7 +213,7 @@ app.use((req, res) => {
   });
 });
 
-//  Manejo de errores global
+//  Manejo global de errores
 app.use((error, req, res, next) => {
   console.error(" Error no manejado:", error);
   res.status(500).json({
@@ -254,16 +226,17 @@ app.use((error, req, res, next) => {
 //  Iniciar servidor
 app.listen(PORT, () => {
   console.log("=".repeat(60));
-  console.log(" Servidor backend corriendo exitosamente");
+  console.log(" Servidor backend + frontend corriendo");
   console.log("=".repeat(60));
-  console.log(` Entorno: ${process.env.NODE_ENV || 'development'}`);
   console.log(` Puerto: ${PORT}`);
-  console.log(` Health check: /health`);
-  console.log(` API noticias: /news?q=tecnologia`);
-  console.log(` HTTP Cat: /httpcat/404`);
-  console.log(` API Info: /api`);
+  console.log(` Entorno: ${process.env.NODE_ENV || 'development'}`);
+  console.log(` Frontend: http://localhost:${PORT}`);
+  console.log(` Health: http://localhost:${PORT}/health`);
+  console.log(` News API: http://localhost:${PORT}/news?q=tecnologia`);
+  console.log(` HTTP Cat: http://localhost:${PORT}/httpcat/404`);
+  console.log(` API Docs: http://localhost:${PORT}/api`);
   console.log("=".repeat(60) + "\n");
 });
 
-//  Exportar app para Vercel
+// Exportar para Vercel
 export default app;
