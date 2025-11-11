@@ -200,7 +200,7 @@ app.get("/api", (req, res) => {
 
 //  Servir index.html en la ruta raíz
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "Index.html"));
 });
 
 //  Manejo de rutas no encontradas
