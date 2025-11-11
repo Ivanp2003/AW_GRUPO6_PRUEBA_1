@@ -38,14 +38,15 @@ async function searchNews() {
   const container = document.getElementById("newsResults");
 
   if (query === "") {
-    container.innerHTML = `<p class="text-center text-red-500">Ingresa un tema para buscar noticias 📰</p>`;
+    container.innerHTML = `<p class="text-center text-red-500">Ingresa un tema para buscar noticias </p>`;
     return;
   }
 
   container.innerHTML = `<p class="text-center text-gray-600">Buscando noticias...</p>`;
 
   try {
-    const response = await fetch(`http://localhost:3000/news?q=${encodeURIComponent(query)}`);
+    // Cambié la URL a relativa: '/news?q=...' en lugar de 'http://localhost:3000/news?q=...'
+    const response = await fetch(`/news?q=${encodeURIComponent(query)}`);
     const data = await response.json();
 
     if (!data.articles || data.articles.length === 0) {
