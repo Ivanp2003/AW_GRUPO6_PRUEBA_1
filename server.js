@@ -41,7 +41,7 @@ if (process.env.NEWS_API_KEY) {
   console.log(` NewsAPI Key configurada: ${process.env.NEWS_API_KEY.slice(0, 8)}...\n`);
 }
 
-// 🩺 Health Check (PRIMERO - antes que otros endpoints)
+//  Health Check (PRIMERO - antes que otros endpoints)
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
@@ -163,7 +163,7 @@ app.get("/httpcat/:code", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(" Error en httpcat:", error);
+    console.error("❌ Error en httpcat:", error);
     res.status(500).json({
       error: "Error al obtener imagen HTTP Cat",
       mensaje: error.message
@@ -251,20 +251,19 @@ app.use((error, req, res, next) => {
   });
 });
 
-//  Iniciar servidor (solo en desarrollo)
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log("=".repeat(60));
-    console.log(" Servidor backend corriendo exitosamente");
-    console.log("=".repeat(60));
-    console.log(` URL principal: http://localhost:${PORT}`);
-    console.log(` Health check: http://localhost:${PORT}/health`);
-    console.log(` API noticias: http://localhost:${PORT}/news?q=tecnologia`);
-    console.log(` HTTP Cat: http://localhost:${PORT}/httpcat/404`);
-    console.log(` API Info: http://localhost:${PORT}/api`);
-    console.log("=".repeat(60) + "\n");
-  });
-}
+//  Iniciar servidor
+app.listen(PORT, () => {
+  console.log("=".repeat(60));
+  console.log(" Servidor backend corriendo exitosamente");
+  console.log("=".repeat(60));
+  console.log(` Entorno: ${process.env.NODE_ENV || 'development'}`);
+  console.log(` Puerto: ${PORT}`);
+  console.log(` Health check: /health`);
+  console.log(` API noticias: /news?q=tecnologia`);
+  console.log(` HTTP Cat: /httpcat/404`);
+  console.log(` API Info: /api`);
+  console.log("=".repeat(60) + "\n");
+});
 
 //  Exportar app para Vercel
 export default app;
