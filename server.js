@@ -16,10 +16,13 @@ const PORT = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Servir archivos estáticos desde la raíz del proyecto
+app.use(express.static(path.join(__dirname, "../"))); // <-- importante para Render
+
 //  Validar existencia de la API Key
 if (!process.env.NEWS_API_KEY) {
   console.error("\n ERROR CRÍTICO: Falta configurar NEWS_API_KEY en tu archivo .env");
-  console.error(" Pasos para solucionarlo:");
+  console.error("💡 Pasos para solucionarlo:");
   console.error("   1 Copia el archivo `.env.example` a `.env`");
   console.error("   2 Agrega tu API key de NewsAPI como: NEWS_API_KEY=tu_clave_aquí");
   console.error("   3 Reinicia el servidor.\n");
@@ -31,9 +34,8 @@ console.log(` NewsAPI Key configurada: ${process.env.NEWS_API_KEY.slice(0, 8)}..
 
 // Middleware
 app.use(cors());
-app.use(express.static(__dirname)); // Servir archivos estáticos (CSS, JS, etc.)
 
-// 🔍 Endpoint para buscar noticias
+//  Endpoint para buscar noticias
 app.get("/news", async (req, res) => {
   const query = req.query.q;
 
@@ -90,9 +92,9 @@ app.get("/health", (req, res) => {
   });
 });
 
-//  Servir página principal
+//  Servir página principal (desde la raíz)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "../index.html")); // <-- ajustado para Render
 });
 
 //  Iniciar servidor
