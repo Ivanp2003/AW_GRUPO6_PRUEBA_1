@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, "../"))); // <-- importante para Ren
 //  Validar existencia de la API Key
 if (!process.env.NEWS_API_KEY) {
   console.error("\n ERROR CRÍTICO: Falta configurar NEWS_API_KEY en tu archivo .env");
-  console.error("💡 Pasos para solucionarlo:");
+  console.error(" Pasos para solucionarlo:");
   console.error("   1 Copia el archivo `.env.example` a `.env`");
   console.error("   2 Agrega tu API key de NewsAPI como: NEWS_API_KEY=tu_clave_aquí");
   console.error("   3 Reinicia el servidor.\n");
