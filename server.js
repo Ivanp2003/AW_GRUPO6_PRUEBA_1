@@ -29,7 +29,7 @@ if (process.env.NEWS_API_KEY) {
   console.warn("  NEWS_API_KEY no configurada");
 }
 
-// 🩺 Health Check
+//  Health Check
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
